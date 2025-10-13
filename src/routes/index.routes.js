@@ -1,8 +1,7 @@
 import { Router } from 'express';
-// import prisma from '../config/database.js'; // Используем клиент Prisma
-import { PrismaClient } from '@prisma/client'; 
+import prisma from '../config/database.js'; 
+import authRoutes from './auth.routes.js';
 
-const prisma = new PrismaClient(); 
 const router = Router();
 
 // Тестовый маршрут для проверки статуса сервера и БД
@@ -25,5 +24,7 @@ router.get('/status', async (req, res) => {
         });
     }
 });
+
+router.use('/auth', authRoutes); 
 
 export default router;
