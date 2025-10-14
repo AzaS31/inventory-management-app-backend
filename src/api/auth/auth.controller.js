@@ -1,5 +1,6 @@
 import passport from 'passport';
 import * as authService from './auth.service.js';
+import prisma from "../../config/database.js";
 
 export async function register(req, res, next) {
     try {
@@ -7,13 +8,13 @@ export async function register(req, res, next) {
         // Здесь должна быть валидация Joi/validator.js!
 
         const user = await authService.registerUser(email, password, username);
-        
+
         // Автоматический вход после регистрации 
         req.login(user, (err) => {
             if (err) return next(err);
-            return res.status(201).json({ 
-                message: 'Registration successful and logged in.', 
-                user: { id: user.id, username: user.username } 
+            return res.status(201).json({
+                message: 'Registration successful and logged in.',
+                user: { id: user.id, username: user.username }
             });
         });
 
@@ -23,18 +24,28 @@ export async function register(req, res, next) {
 }
 
 export function login(req, res, next) {
-    passport.authenticate('local', (err, user, info) => {
+    passport.authenticate('local', async (err, user, info) => {
         if (err) return next(err);
         if (!user) {
-            return res.status(401).json({ message: info.message }); 
+            return res.status(401).json({ message: info.message });
         }
 
-        // Успешный вход
-        req.logIn(user, (err) => {
+        const fullUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            include: { role: true },
+        });
+
+        req.logIn(fullUser, (err) => {
             if (err) return next(err);
-            return res.status(200).json({ 
+            return res.status(200).json({
                 message: 'Login successful.',
-                user: { id: user.id, username: user.username, email: user.email }
+                user: {
+                    id: fullUser.id,
+                    username: fullUser.username,
+                    email: fullUser.email,
+                    roleId: fullUser.roleId,
+                    role: fullUser.role, 
+                },
             });
         });
     })(req, res, next);

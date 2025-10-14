@@ -1,3 +1,4 @@
+// src/routes/index.routes.js
 import { Router } from 'express';
 import prisma from '../config/database.js'; 
 import authRoutes from './auth.routes.js';

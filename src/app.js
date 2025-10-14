@@ -5,6 +5,8 @@ import session from 'express-session';
 import passport from 'passport';
 import './config/passport.js';
 import apiRoutes from './routes/index.routes.js';
+import usersRoutes from "./routes/users.routes.js";
+// import inventoriesRoutes from "./routes/inventories.routes.js";
 
 config();
 const app = express();
@@ -39,7 +41,8 @@ app.use("/api", apiRoutes);
 app.get("/", (req, res) => {
     res.send("Course project api is running");
 });
-
+app.use("/api/users", usersRoutes);
+// app.use("/api/inventories", inventoriesRoutes);
 // app.use(errorHandler);
 
 export default app;

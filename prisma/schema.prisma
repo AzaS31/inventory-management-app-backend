@@ -98,3 +98,10 @@ model Item {
   // Уникальность customId только в пределах одной Inventory
   @@unique([inventoryId, customId])
 }
+
+// 6. Модель user_sessions
+model user_sessions {
+  sid     String  @id
+  sess    Json
+  expire  DateTime
+}
